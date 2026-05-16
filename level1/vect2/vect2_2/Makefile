@@ -1,6 +1,6 @@
 # Compiler
 CXX = c++
-CXXFLAGS = -Wall -Wextra -Werror -std=c++17 -I./given -I./complete
+CXXFLAGS = -Wall -Wextra -Werror -std=c++98 -I./given -I./complete
 
 # Source files
 SRCS = vect2.cpp main.cpp

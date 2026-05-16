@@ -1,19 +1,24 @@
 #pragma once
 
 #include "../given/searchable_bag.hpp"
-
 class set
 {
 	private:
-		searchable_bag&	_bag;
+		searchable_bag*	_bag;
 
 	public:
-		set(searchable_bag& other) : _bag(other) {};
+		set() {};
+		set(const set& other) : _bag(other._bag) {}
+		set(searchable_bag& other) : _bag(&other) {}
+		set& operator=(const set& other);
+		~set() {}
 
-		void	insert (int);
-		void	insert (int *, int);
+		bool has(int) const;
+
+		void	insert(int);
+		void	insert(int *, int);
 		void	print() const;
 		void	clear();
-		bool	has(int) const;
+
 		const searchable_bag& get_bag() const;
 };

@@ -8,13 +8,13 @@ create node: 3
 1
 0
 0
-0
 1
 1
 1
-0
 1
-0
+1
+1
+1
 1
 destroying value: 1
 destroying value: 2
@@ -84,13 +84,13 @@ create node: 1
 1
 0
 0
-0
 1
 1
 1
-0
 1
-0
+1
+1
+1
 1
 destroying value: -1
 destroying value: 0
@@ -125,19 +125,19 @@ create node: 50
 1
 0
 0
-0
+1
 1
 0
 0
-0
+1
 1
 0
 0
-0
+1
 1
 0
 0
-0
+1
 1
 0
 0
@@ -202,27 +202,27 @@ create node: 3
 9 1 8 2 7 3 
 1
 1
-0
 1
-0
 1
-0
-0
-0
 1
-0
-1
-0
-1
-0
-1
-0
 1
 0
 0
-0
+1
+1
+1
+1
+1
+1
+1
+1
+1
 1
 0
+0
+1
+1
+1
 1
 destroying value: 9
 destroying value: 1

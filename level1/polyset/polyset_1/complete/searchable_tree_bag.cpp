@@ -15,7 +15,7 @@ bool	searchable_tree_bag::has(int val) const
 	while (tmp)
 	{
 		if (tmp->value == val) return (true);
-		else if (tmp->value < val) tmp = tmp->l;
+		else if (tmp->value > val) tmp = tmp->l;
 		else tmp = tmp->r;
 	}
 	return (false);
