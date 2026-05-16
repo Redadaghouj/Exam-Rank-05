@@ -1,0 +1,265 @@
+TEST: Basic_Insert | ARGS: 1 2 3 | EXIT: 0
+create node: 1
+create node: 2
+create node: 3
+1 2 3 
+1 2 3 
+1
+1
+0
+0
+0
+1
+1
+1
+0
+1
+0
+1
+destroying value: 1
+destroying value: 2
+destroying value: 3
+
+create node: 1
+1 
+1 
+1 
+
+create node: 2
+1 2 3 4 
+1 2 3 4 
+1 2 
+
+create node: 3
+1 2 3 4 
+1 2 3 4 
+1 2 3 
+
+----------------------------------------
+
+TEST: Duplicates | ARGS: 5 5 5 | EXIT: 0
+create node: 5
+create node: 5
+duplicate value: delete node
+create node: 5
+duplicate value: delete node
+5 
+5 5 5 
+1
+1
+0
+0
+1
+1
+0
+0
+1
+1
+0
+0
+destroying value: 5
+
+create node: 5
+5 
+5 
+5 
+
+1 2 3 4 5 
+1 2 3 4 5 
+5 
+
+1 2 3 4 5 
+1 2 3 4 5 
+5 
+
+----------------------------------------
+
+TEST: Negative_Vals | ARGS: -1 0 1 | EXIT: 0
+create node: -1
+create node: 0
+create node: 1
+-1 1 
+-1 0 1 
+1
+1
+0
+0
+0
+1
+1
+1
+0
+1
+0
+1
+destroying value: -1
+destroying value: 0
+destroying value: 1
+
+create node: -1
+-1 
+-1 
+-1 
+
+create node: 0
+1 2 3 4 0 
+1 2 3 4 0 
+-1 
+
+create node: 1
+1 2 3 4 
+1 2 3 4 
+-1 1 
+
+----------------------------------------
+
+TEST: Large_Seq | ARGS: 10 20 30 40 50 | EXIT: 0
+create node: 10
+create node: 20
+create node: 30
+create node: 40
+create node: 50
+10 20 30 40 50 
+10 20 30 40 50 
+1
+1
+0
+0
+0
+1
+0
+0
+0
+1
+0
+0
+0
+1
+0
+0
+0
+1
+0
+0
+destroying value: 10
+destroying value: 20
+destroying value: 30
+destroying value: 40
+destroying value: 50
+
+create node: 10
+10 
+10 
+10 
+
+create node: 20
+1 2 3 4 20 
+1 2 3 4 20 
+10 20 
+
+create node: 30
+1 2 3 4 30 
+1 2 3 4 30 
+10 20 30 
+
+create node: 40
+1 2 3 4 40 
+1 2 3 4 40 
+10 20 30 40 
+
+create node: 50
+1 2 3 4 50 
+1 2 3 4 50 
+10 20 30 40 50 
+
+----------------------------------------
+
+TEST: Single_Val | ARGS: 42 | EXIT: 0
+create node: 42
+42 
+42 
+1
+1
+0
+0
+destroying value: 42
+
+create node: 42
+42 
+42 
+42 
+
+----------------------------------------
+
+TEST: Mixed_Order | ARGS: 9 1 8 2 7 3 | EXIT: 0
+create node: 9
+create node: 1
+create node: 8
+create node: 2
+create node: 7
+create node: 3
+1 2 3 7 8 9 
+9 1 8 2 7 3 
+1
+1
+0
+1
+0
+1
+0
+0
+0
+1
+0
+1
+0
+1
+0
+1
+0
+1
+0
+0
+0
+1
+0
+1
+destroying value: 9
+destroying value: 1
+destroying value: 8
+destroying value: 2
+destroying value: 7
+destroying value: 3
+
+create node: 9
+9 
+9 
+9 
+
+create node: 1
+1 2 3 4 
+1 2 3 4 
+1 9 
+
+create node: 8
+1 2 3 4 8 
+1 2 3 4 8 
+1 8 9 
+
+create node: 2
+1 2 3 4 
+1 2 3 4 
+1 2 8 9 
+
+create node: 7
+1 2 3 4 7 
+1 2 3 4 7 
+1 2 7 8 9 
+
+create node: 3
+1 2 3 4 
+1 2 3 4 
+1 2 3 7 8 9 
+
+----------------------------------------
+

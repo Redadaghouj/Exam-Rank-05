@@ -1,0 +1,349 @@
+===== POLYSET TEST LOG =====
+Started: Wed May  6 03:34:46 PM +01 2026
+
+==============================
+TEST: basic_insert
+ARGS: 1 2 3
+
+--- OUTPUT ---
+create node: 1
+create node: 2
+create node: 3
+1 2 3 
+1 2 3 
+1
+1
+0
+0
+0
+1
+1
+1
+0
+1
+0
+1
+destroying value: 1
+destroying value: 2
+destroying value: 3
+
+create node: 1
+1 
+1 
+1 
+
+create node: 2
+1 2 3 4 
+1 2 3 4 
+1 2 
+
+create node: 3
+1 2 3 4 
+1 2 3 4 
+1 2 3 
+
+--- EXPECTED ---
+EXPECTED_OUTPUT_1
+
+--- DIFF ---
+--- .exp.tmp	2026-05-06 15:34:47.951999690 +0100
++++ .out.tmp	2026-05-06 15:34:47.950999678 +0100
+@@ -1 +1,35 @@
+-EXPECTED_OUTPUT_1
++create node: 1
++create node: 2
++create node: 3
++1 2 3 
++1 2 3 
++1
++1
++0
++0
++0
++1
++1
++1
++0
++1
++0
++1
++destroying value: 1
++destroying value: 2
++destroying value: 3
++
++create node: 1
++1 
++1 
++1 
++
++create node: 2
++1 2 3 4 
++1 2 3 4 
++1 2 
++
++create node: 3
++1 2 3 4 
++1 2 3 4 
++1 2 3 
+==============================
+
+==============================
+TEST: duplicates
+ARGS: 1 1 2 3 3
+
+--- OUTPUT ---
+create node: 1
+create node: 1
+duplicate value: delete node
+create node: 2
+create node: 3
+create node: 3
+duplicate value: delete node
+1 2 3 
+1 1 2 3 3 
+1
+1
+0
+0
+1
+1
+0
+0
+0
+1
+1
+1
+0
+1
+0
+1
+0
+1
+0
+1
+destroying value: 1
+destroying value: 2
+destroying value: 3
+
+create node: 1
+1 
+1 
+1 
+
+1 2 3 4 
+1 2 3 4 
+1 
+
+create node: 2
+1 2 3 4 
+1 2 3 4 
+1 2 
+
+create node: 3
+1 2 3 4 
+1 2 3 4 
+1 2 3 
+
+create node: 3
+duplicate value: delete node
+1 2 3 4 
+1 2 3 4 
+1 2 3 
+
+--- EXPECTED ---
+EXPECTED_OUTPUT_2
+
+--- DIFF ---
+--- .exp.tmp	2026-05-06 15:34:47.960999800 +0100
++++ .out.tmp	2026-05-06 15:34:47.959999788 +0100
+@@ -1 +1,57 @@
+-EXPECTED_OUTPUT_2
++create node: 1
++create node: 1
++duplicate value: delete node
++create node: 2
++create node: 3
++create node: 3
++duplicate value: delete node
++1 2 3 
++1 1 2 3 3 
++1
++1
++0
++0
++1
++1
++0
++0
++0
++1
++1
++1
++0
++1
++0
++1
++0
++1
++0
++1
++destroying value: 1
++destroying value: 2
++destroying value: 3
++
++create node: 1
++1 
++1 
++1 
++
++1 2 3 4 
++1 2 3 4 
++1 
++
++create node: 2
++1 2 3 4 
++1 2 3 4 
++1 2 
++
++create node: 3
++1 2 3 4 
++1 2 3 4 
++1 2 3 
++
++create node: 3
++duplicate value: delete node
++1 2 3 4 
++1 2 3 4 
++1 2 3 
+==============================
+
+==============================
+TEST: reverse_insert
+ARGS: 5 4 3 2 1
+
+--- OUTPUT ---
+create node: 5
+create node: 4
+create node: 3
+create node: 2
+create node: 1
+1 2 3 4 5 
+5 4 3 2 1 
+1
+1
+0
+1
+0
+1
+0
+1
+0
+1
+0
+1
+0
+1
+0
+1
+0
+1
+0
+0
+destroying value: 5
+destroying value: 4
+destroying value: 3
+destroying value: 2
+destroying value: 1
+
+create node: 5
+5 
+5 
+5 
+
+create node: 4
+1 2 3 4 
+1 2 3 4 
+4 5 
+
+create node: 3
+1 2 3 4 
+1 2 3 4 
+3 4 5 
+
+create node: 2
+1 2 3 4 
+1 2 3 4 
+2 3 4 5 
+
+create node: 1
+1 2 3 4 
+1 2 3 4 
+1 2 3 4 5 
+
+--- EXPECTED ---
+EXPECTED_OUTPUT_3
+
+--- DIFF ---
+--- .exp.tmp	2026-05-06 15:34:47.970999923 +0100
++++ .out.tmp	2026-05-06 15:34:47.970999923 +0100
+@@ -1 +1,57 @@
+-EXPECTED_OUTPUT_3
++create node: 5
++create node: 4
++create node: 3
++create node: 2
++create node: 1
++1 2 3 4 5 
++5 4 3 2 1 
++1
++1
++0
++1
++0
++1
++0
++1
++0
++1
++0
++1
++0
++1
++0
++1
++0
++1
++0
++0
++destroying value: 5
++destroying value: 4
++destroying value: 3
++destroying value: 2
++destroying value: 1
++
++create node: 5
++5 
++5 
++5 
++
++create node: 4
++1 2 3 4 
++1 2 3 4 
++4 5 
++
++create node: 3
++1 2 3 4 
++1 2 3 4 
++3 4 5 
++
++create node: 2
++1 2 3 4 
++1 2 3 4 
++2 3 4 5 
++
++create node: 1
++1 2 3 4 
++1 2 3 4 
++1 2 3 4 5 
+==============================
+
