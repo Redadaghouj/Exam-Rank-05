@@ -1,53 +1,48 @@
 #pragma once
-
 #include <iostream>
 #include <string>
 
-class bigint {
-private:
-    std::string digits;  // Most significant digit first
+class bigint
+{
+	private:
+// ── Internals ────────────────────────────────────────────────────────────────
+		std::string	_s;
 
-    void normalize();    // Remove leading zeros
+		// void			trim();
+		bool			to_ul(unsigned long &out) const;
 
-public:
-    // Constructors
-    bigint();
-    bigint(const bigint& other);
-    bigint(unsigned long n);
+	public:
+// ── Constructors ─────────────────────────────────────────────────────────────
+		bigint();
+		bigint(unsigned long long n);
+		bigint(const bigint &o);
+		bigint	&operator=(const bigint &o);
 
-    // Assignment
-    bigint& operator=(const bigint& other);
+// ── Addition ─────────────────────────────────────────────────────────────────
+		bigint	operator+(const bigint &o)  const;
+		bigint	&operator+=(const bigint &o);
+		bigint	&operator++();
+		bigint	operator++(int);
 
-    // Arithmetic
-    bigint operator+(const bigint& other) const;
-    bigint& operator+=(const bigint& other);
+// ── Digit Shifts ─────────────────────────────────────────────────────────────
+		bigint	operator<<(int n)           const;
+		bigint	&operator<<=(int n);
+		bigint	operator<<(const bigint &o) const;
+		bigint	&operator<<=(const bigint &o);
 
-    // Increment
-    bigint& operator++();    // prefix
-    bigint operator++(int);  // postfix
+		bigint	operator>>(int n)           const;
+		bigint	&operator>>=(int n);
+		bigint	operator>>(const bigint &o) const;
+		bigint	&operator>>=(const bigint &o);
 
-    // Shifts (decimal shifts)
-    bigint operator<<(unsigned long n) const;
-    bigint& operator<<=(unsigned long n);
-    bigint operator>>(unsigned long n) const;
-    bigint& operator>>=(unsigned long n);
+// ── Comparisons ──────────────────────────────────────────────────────────────
+		bool	operator==(const bigint &o) const;
+		bool	operator!=(const bigint &o) const;
+		bool	operator<(const bigint &o)  const;
+		bool	operator<=(const bigint &o) const;
+		bool	operator>(const bigint &o)  const;
+		bool	operator>=(const bigint &o) const;
 
-    bigint operator<<(const bigint& other) const;
-    bigint& operator<<=(const bigint& other);
-    bigint operator>>(const bigint& other) const;
-    bigint& operator>>=(const bigint& other);
-
-    // Comparisons
-    bool operator==(const bigint& other) const;
-    bool operator!=(const bigint& other) const;
-    bool operator<(const bigint& other) const;
-    bool operator<=(const bigint& other) const;
-    bool operator>(const bigint& other) const;
-    bool operator>=(const bigint& other) const;
-
-    // I/O
-    friend std::ostream& operator<<(std::ostream& os, const bigint& other);
-
-    // Conversion to unsigned long
-    friend unsigned long to_uint(const bigint& other);
+// ── Output ───────────────────────────────────────────────────────────────────
+		friend std::ostream	&operator<<(std::ostream &os, const bigint &b);
 };
