@@ -144,7 +144,7 @@ bigint&	bigint::operator>>=(int n)
 
 bigint	bigint::operator>>(const bigint& o) const
 {
-	bigint			clone(*this);
+	bigint	clone(*this);
 
 	clone >>= o;
 	return (clone);
