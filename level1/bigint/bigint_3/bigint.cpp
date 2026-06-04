@@ -65,7 +65,7 @@ bigint bigint::operator+(const bigint& o) const
 
 bigint& bigint::operator++()
 {
-	*this += 1;
+	*this += bigint(1);
 	return (*this);
 }
 
@@ -73,7 +73,7 @@ bigint	bigint::operator++(int)
 {
 	bigint	clone(*this);
 
-	*this += 1;
+	*this += bigint(1);
 	return (clone);
 }
 
