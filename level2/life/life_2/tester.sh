@@ -7,7 +7,7 @@ NC='\033[0m'
 
 # Compile life.c
 echo "Compiling life.c..."
-if ! cc -Wall -Wextra -Werror -o life life_gemini.c; then
+if ! cc -Wall -Wextra -Werror -o life life.c; then
     echo -e "${RED}Compilation failed!${NC}"
     exit 1
 fi

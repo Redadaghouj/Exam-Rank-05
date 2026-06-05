@@ -1,124 +1,91 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include <stdbool.h>
 
-typedef struct s_game {
-    int width;
-    int height;
-    int iteration;
-    char **map;
-} t_game;
+static int	w, h, iter, stride;
+static char	*map[2];
 
-static void print_map(t_game game)
+static int	count(char *map, int p)
 {
-    for (int y = 0; y < game.height; y++)
-    {
-        for (int x = 0; x < game.width; x++)
-            putchar(game.map[y][x]);
-        putchar('\n');
-    }
+	return (map[p - 1] + map[p + 1]
+			+ map[p - stride] + map[p + stride]
+			+ map[p - stride - 1] + map[p + stride + 1]
+			+ map[p - stride + 1] + map[p + stride - 1]);
 }
 
-static void free_map(t_game *game)
+static int	init_game(int ac, char **av)
 {
-    if (!game->map)
-        return;
-    for (int y = 0; y < game->height; y++)
-        free(game->map[y]);
-    free(game->map);
+	if (ac != 4)
+		return (1);
+	w = atoi(av[1]);
+	h = atoi(av[2]);
+	iter = atoi(av[3]);
+	if (w <= 0 || h <= 0 || iter < 0)
+		return (1);
+	stride = w + 2;
+	map[0] = calloc((w + 2) * (h + 2), 1);
+	map[1] = calloc((w + 2) * (h + 2), 1);
+	if (!map[0] || !map[1])
+		return (1);
+	return (0);
 }
 
-static void fill_map(t_game *game)
+static void	draw_input(void)
 {
-    int x = 0, y = 0;
-    bool draw = false;
-    char buffer;
+	int x = 1, y = 1, p = stride + 1, pen = 0;
+	char c;
 
-    while (read(STDIN_FILENO, &buffer, 1) > 0)
-    {
-        switch (buffer)
-        {
-            case 'w': if (y > 0) y--; break;
-            case 'a': if (x > 0) x--; break;
-            case 's': if (y < game->height - 1) y++; break;
-            case 'd': if (x < game->width - 1) x++; break;
-            case 'x': draw = !draw; break;
-            default: continue;
-        }
-        if (draw)
-            game->map[y][x] = 'O';
-    }
+	while (read(0, &c, 1) > 0)
+	{
+		if (c == 'w' && y > 1)		y--, p -= stride;
+		else if (c == 's' && y < h)	y++, p += stride;
+		else if (c == 'a' && x > 1)	x--, p--;
+		else if (c == 'd' && x < w)	x++, p++;
+		else if (c == 'x')			pen = !pen;
+		else						continue;
+		if (pen)
+			map[0][p] = 1;
+	}
 }
 
-static int count_neighbors(t_game game, int y, int x)
+static void	play(void)
 {
-    int count = 0;
-    for (int dy = -1; dy <= 1; dy++)
-        for (int dx = -1; dx <= 1; dx++)
-        {
-            if (dx == 0 && dy == 0)
-                continue;
-            int nx = x + dx;
-            int ny = y + dy;
-            if (nx >= 0 && nx < game.width && ny >= 0 && ny < game.height)
-                if (game.map[ny][nx] == 'O')
-                    count++;
-        }
-    return count;
+	int	x, y, p;
+
+	for (int it = 0; it < iter; it++)
+	{
+		for (y = 1; y <= h; y++)
+		{
+			for (x = 1; x <= w; x++)
+			{
+				p = y * stride + x;
+				int n = count(map[it % 2], p);
+				map[(it + 1) % 2][p] = (n == 3 || (map[it % 2][p] && n == 2));
+			}
+		}
+	}
 }
 
-static void play_game(t_game *game)
+static void	print_free(void)
 {
-    char **new_map = malloc(game->height * sizeof(char *));
-    for (int y = 0; y < game->height; y++)
-    {
-        new_map[y] = malloc(game->width * sizeof(char));
-        for (int x = 0; x < game->width; x++)
-            new_map[y][x] = ' ';
-    }
+	int	x, y;
 
-    for (int y = 0; y < game->height; y++)
-        for (int x = 0; x < game->width; x++)
-        {
-            int n = count_neighbors(*game, y, x);
-            if (game->map[y][x] == 'O')
-                new_map[y][x] = (n == 2 || n == 3) ? 'O' : ' ';
-            else
-                new_map[y][x] = (n == 3) ? 'O' : ' ';
-        }
-
-    free_map(game);
-    game->map = new_map;
+	for (y = 1; y <= h; y++)
+	{
+		for (x = 1; x <= w; x++)
+			putchar(map[iter % 2][y * stride + x] ? 'O' : ' ');
+		putchar('\n');
+	}
+	free(map[0]);
+	free(map[1]);
 }
 
-int main(int argc, char **argv)
+int	main(int ac, char **av)
 {
-    if (argc != 4)
-        return 1;
-
-    t_game game;
-    game.width = atoi(argv[1]);
-    game.height = atoi(argv[2]);
-    game.iteration = atoi(argv[3]);
-
-    if (game.width <= 0 || game.height <= 0 || game.iteration < 0)
-        return 1;
-
-    game.map = malloc(game.height * sizeof(char *));
-    for (int y = 0; y < game.height; y++)
-    {
-        game.map[y] = malloc(game.width * sizeof(char));
-        for (int x = 0; x < game.width; x++)
-            game.map[y][x] = ' ';
-    }
-
-    fill_map(&game);
-
-    for (int i = 0; i < game.iteration; i++)
-        play_game(&game);
-
-    print_map(game);
-    free_map(&game);
-    return 0;
+	if (init_game(ac, av))
+		return (1);
+	draw_input();
+	play();
+	print_free();
+	return (0);
 }
