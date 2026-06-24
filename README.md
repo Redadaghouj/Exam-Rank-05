@@ -1,51 +1,50 @@
-# Exam Rank 05
+# Exam Rank 05 — 42 Network
 
-Solutions for the 1337 Coding School Exam Rank 05.
+Solutions for the 1337 Coding School Exam Rank 05, covering C++ OOP exercises (level 1) and C algorithm problems (level 2).
 
-## Status
+## My Result
 
-✅ Passed in the exam:
+Passed on first attempt with **bigint** (level 1) and **bsq** (level 2).
 
-* `bigint`
-* `bsq`
+---
 
-## Levels
+## Subjects
 
-### Level 1
+### Level 1 — C++
 
-| Subject   | Description                               |
-| --------- | ----------------------------------------- |
-| `vect2`   | 2D vector class with operator overloading |
-| `bigint`  | Arbitrary precision unsigned integer      |
-| `polyset` | Searchable bags and set implementation    |
+| Subject | Description | Status |
+|---------|-------------|--------|
+| `vect2` | 2D vector class — operator overloading, dot/cross products |
+| `bigint` | Arbitrary-precision unsigned integer, full arithmetic operators  |
+| `polyset` | Bag and set containers without STL — union, intersection, search |
 
-### Level 2
+All level 1 subjects require **Orthodox Canonical Form**: default constructor, copy constructor, copy assignment operator, destructor.
 
-| Subject | Description                      |
-| ------- | -------------------------------- |
-| `bsq`   | Biggest Square problem           |
-| `life`  | Conway's Game of Life simulation |
+### Level 2 — C
 
-## Topics Covered
+| Subject | Description | Status |
+|---------|-------------|--------|
+| `bsq` | Largest square of empty cells in a grid — O(n·m) DP  |
+| `life` | Conway's Game of Life — n steps simulation with wrapping  |
 
-### C++
+---
 
-* Orthodox Canonical Form
-* Operator Overloading
-* Abstract Classes
-* Inheritance
-* Polymorphism
-* STL-free implementations
-* Arbitrary Precision Arithmetic
+## Key Concepts
 
-### C
+**C++ (level 1)**
+- Orthodox Canonical Form
+- Operator overloading (`+`, `-`, `*`, `<<`, `>>`, comparison, increment)
+- Abstract classes, inheritance, polymorphism
+- No STL — containers implemented from scratch
 
-* Dynamic Programming
-* Parsing & Validation
-* Cellular Automata
-* Memory Management
-* Algorithm Design
+**C (level 2)**
+- Dynamic programming (BSQ uses the classic 2D DP recurrence)
+- Input parsing and map validation
+- Cellular automata rules (Life)
+- Manual memory management
+
+---
 
 ## Disclaimer
 
-These solutions are provided for learning and exam preparation purposes. Attempt the subjects yourself before consulting existing implementations.
+Attempt each subject yourself before reading any solution. The exam gives you the same subject repeatedly until you pass or time runs out — reading a solution without understanding it will not help you.
