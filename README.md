@@ -12,8 +12,8 @@ Passed on first attempt with **bigint** (level 1) and **bsq** (level 2).
 
 ### Level 1 — C++
 
-| Subject | Description | Status |
-|---------|-------------|--------|
+| Subject | Description |
+|---------|-------------|
 | `vect2` | 2D vector class — operator overloading, dot/cross products |
 | `bigint` | Arbitrary-precision unsigned integer, full arithmetic operators  |
 | `polyset` | Bag and set containers without STL — union, intersection, search |
@@ -22,8 +22,8 @@ All level 1 subjects require **Orthodox Canonical Form**: default constructor, c
 
 ### Level 2 — C
 
-| Subject | Description | Status |
-|---------|-------------|--------|
+| Subject | Description |
+|---------|-------------|
 | `bsq` | Largest square of empty cells in a grid — O(n·m) DP  |
 | `life` | Conway's Game of Life — n steps simulation with wrapping  |
 
