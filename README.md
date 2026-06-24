@@ -12,9 +12,9 @@ Passed on first attempt with **bigint** (level 1) and **bsq** (level 2).
 
 | Subject | Description | Tester |
 |---------|-------------|--------|
-| `vect2` | 2D vector class — operator overloading, dot/cross products | [test.py](vect2/test.py) |
-| `bigint` | Arbitrary-precision unsigned integer, full arithmetic operators | [test.py](bigint/test.py) |
-| `polyset` | Bag and set containers without STL — union, intersection, search | [test.py](polyset/test.py) |
+| `vect2` | 2D vector class — operator overloading, dot/cross products | [test.py](level1/vect2/test.py) |
+| `bigint` | Arbitrary-precision unsigned integer, full arithmetic operators | [test.py](level1/bigint/test.py) |
+| `polyset` | Bag and set containers without STL — union, intersection, search | [test.py](level1/polyset/test.py) |
 
 All level 1 subjects require **Orthodox Canonical Form**: default constructor, copy constructor, copy assignment operator, destructor.
 
@@ -22,8 +22,8 @@ All level 1 subjects require **Orthodox Canonical Form**: default constructor, c
 
 | Subject | Description | Tester |
 |---------|-------------|--------|
-| `bsq` | Largest square of empty cells in a grid — O(n·m) DP | [test.py](bsq/test.py) |
-| `life` | Conway's Game of Life — n steps simulation with wrapping | [test.py](life/test.py) |
+| `bsq` | Largest square of empty cells in a grid — O(n·m) DP | [test.py](level2/bsq/test.py) |
+| `life` | Conway's Game of Life — n steps simulation with wrapping | [test.py](level2/life/test.py) |
 
 ---
 
