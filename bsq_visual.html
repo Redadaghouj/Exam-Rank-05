@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>BSQ solve() Visualizer</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #0a0a0f;
+    color: #e2e8f0;
+    font-family: 'Courier New', monospace;
+    min-height: 100vh;
+    padding: 32px 20px;
+  }
+  h1 { color: #7dd3fc; font-size: 22px; margin-bottom: 6px; letter-spacing: 1px; }
+  .subtitle { color: #475569; font-size: 13px; margin-bottom: 32px; }
+
+  .layout { display: flex; gap: 32px; align-items: flex-start; flex-wrap: wrap; }
+
+  /* GRID */
+  .grid-section { display: flex; flex-direction: column; gap: 16px; }
+  .section-label { color: #64748b; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 4px; }
+  .grid { display: inline-grid; gap: 4px; }
+  .cell {
+    width: 52px; height: 52px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; font-weight: bold;
+    border-radius: 4px;
+    transition: all 0.2s;
+    border: 2px solid transparent;
+    position: relative;
+  }
+  .cell-empty   { background: #1e293b; color: #475569; }
+  .cell-ob      { background: #2d1515; color: #f87171; border-color: #7f1d1d; }
+  .cell-current { background: #14532d; color: #4ade80; border-color: #22c55e; }
+  .cell-top     { background: #1e1b4b; color: #a5b4fc; border-color: #6366f1; }
+  .cell-left    { background: #431407; color: #fb923c; border-color: #ea580c; }
+  .cell-diag    { background: #2e1065; color: #d8b4fe; border-color: #a855f7; }
+  .cell-done    { background: #0f2027; color: #38bdf8; }
+  .cell-best    { background: #14532d; color: #4ade80; border-color: #22c55e; }
+
+  /* DP ROW */
+  .dp-section { display: flex; flex-direction: column; gap: 4px; }
+  .dp-row { display: flex; gap: 4px; }
+  .dp-cell {
+    width: 52px; height: 36px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; font-weight: bold;
+    border-radius: 4px;
+    background: #0f172a;
+    color: #334155;
+    border: 2px solid #1e293b;
+    transition: all 0.2s;
+  }
+  .dp-cell.active  { background: #14532d; color: #4ade80; border-color: #22c55e; }
+  .dp-cell.filled  { background: #0f2027; color: #38bdf8; border-color: #0369a1; }
+  .dp-cell.top-src { background: #1e1b4b; color: #a5b4fc; border-color: #6366f1; }
+  .dp-cell.left-src{ background: #431407; color: #fb923c; border-color: #ea580c; }
+
+  /* VARS */
+  .vars-box {
+    background: #0f172a;
+    border: 1px solid #1e293b;
+    border-radius: 8px;
+    padding: 16px 20px;
+    min-width: 220px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .var-row { display: flex; justify-content: space-between; align-items: center; gap: 16px; }
+  .var-name { color: #64748b; font-size: 13px; }
+  .var-val  { font-size: 15px; font-weight: bold; }
+  .v-top  { color: #a5b4fc; }
+  .v-left { color: #fb923c; }
+  .v-diag { color: #d8b4fe; }
+  .v-cur  { color: #4ade80; }
+  .v-best { color: #fbbf24; }
+
+  /* FORMULA */
+  .formula-box {
+    background: #0f172a;
+    border: 1px solid #1e293b;
+    border-radius: 8px;
+    padding: 14px 18px;
+    font-size: 13px;
+    line-height: 2;
+  }
+  .formula-box .hi-top  { color: #a5b4fc; font-weight: bold; }
+  .formula-box .hi-left { color: #fb923c; font-weight: bold; }
+  .formula-box .hi-diag { color: #d8b4fe; font-weight: bold; }
+  .formula-box .hi-res  { color: #4ade80; font-weight: bold; }
+
+  /* EXPLANATION */
+  .explain {
+    background: #0f172a;
+    border-left: 3px solid #334155;
+    padding: 12px 16px;
+    font-size: 13px;
+    color: #94a3b8;
+    line-height: 1.7;
+    border-radius: 0 6px 6px 0;
+    min-height: 60px;
+  }
+  .explain b { color: #e2e8f0; }
+
+  /* CONTROLS */
+  .controls { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin-top: 8px; }
+  button {
+    background: #1e293b;
+    color: #94a3b8;
+    border: 1px solid #334155;
+    padding: 8px 18px;
+    border-radius: 6px;
+    font-family: monospace;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  button:hover { background: #263548; color: #e2e8f0; }
+  button.primary { background: #1d4ed8; color: #fff; border-color: #2563eb; }
+  button.primary:hover { background: #2563eb; }
+  button:disabled { opacity: 0.3; cursor: not-allowed; }
+  .step-counter { color: #475569; font-size: 13px; }
+
+  /* LEGEND */
+  .legend { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 20px; }
+  .leg { display: flex; align-items: center; gap: 6px; font-size: 12px; color: #64748b; }
+  .leg-box { width: 14px; height: 14px; border-radius: 3px; border: 1px solid transparent; }
+
+  .right-col { display: flex; flex-direction: column; gap: 16px; flex: 1; min-width: 220px; }
+
+  .code-highlight {
+    background: #0f172a;
+    border: 1px solid #1e293b;
+    border-radius: 8px;
+    padding: 14px 18px;
+    font-size: 12px;
+    line-height: 1.8;
+    color: #475569;
+  }
+  .code-highlight .hl { color: #fbbf24; background: #1c1500; border-radius: 2px; padding: 0 2px; }
+  .code-highlight .kw { color: #818cf8; }
+  .code-highlight .fn { color: #7dd3fc; }
+  .code-highlight .num { color: #34d399; }
+</style>
+</head>
+<body>
+
+<h1>solve() — Step by Step</h1>
+<p class="subtitle">4×4 grid with one obstacle at (1,2). Watch how the 1D dp array gets reused each row.</p>
+
+<div class="legend">
+  <div class="leg"><div class="leg-box" style="background:#14532d;border-color:#22c55e"></div> current cell</div>
+  <div class="leg"><div class="leg-box" style="background:#1e1b4b;border-color:#6366f1"></div> top (dp[y-1][x])</div>
+  <div class="leg"><div class="leg-box" style="background:#431407;border-color:#ea580c"></div> left (dp[y][x-1])</div>
+  <div class="leg"><div class="leg-box" style="background:#2e1065;border-color:#a855f7"></div> diag (dp[y-1][x-1])</div>
+  <div class="leg"><div class="leg-box" style="background:#0f2027;border-color:#0369a1"></div> computed</div>
+  <div class="leg"><div class="leg-box" style="background:#2d1515;border-color:#7f1d1d"></div> obstacle</div>
+</div>
+
+<div class="layout">
+  <div class="grid-section">
+    <div class="section-label">Grid</div>
+    <div class="grid" id="grid"></div>
+    <div class="section-label" style="margin-top:12px">dp[ ] array (1 row only)</div>
+    <div class="dp-row" id="dp-row"></div>
+    <div style="display:flex;gap:4px;margin-top:2px" id="dp-idx"></div>
+  </div>
+
+  <div class="right-col">
+    <div class="vars-box">
+      <div class="section-label">Variables</div>
+      <div class="var-row"><span class="var-name">top</span>    <span class="var-val v-top"  id="v-top">—</span></div>
+      <div class="var-row"><span class="var-name">dp[x-1] (left)</span> <span class="var-val v-left" id="v-left">—</span></div>
+      <div class="var-row"><span class="var-name">diag</span>   <span class="var-val v-diag" id="v-diag">—</span></div>
+      <div class="var-row"><span class="var-name">dp[x] result</span>  <span class="var-val v-cur"  id="v-cur">—</span></div>
+      <div style="border-top:1px solid #1e293b;padding-top:10px" class="var-row">
+        <span class="var-name">best so far</span>
+        <span class="var-val v-best" id="v-best">0</span>
+      </div>
+      <div class="var-row"><span class="var-name">best at (r,c)</span> <span class="var-val v-best" id="v-rc">—</span></div>
+    </div>
+
+    <div class="formula-box" id="formula">
+      Waiting for first step...
+    </div>
+
+    <div class="explain" id="explain">
+      Press <b>Next</b> to start stepping through the algorithm.
+    </div>
+
+    <div class="code-highlight">
+      <span class="kw">int</span> top = dp[x];&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#334155">// save before overwrite</span><br>
+      <span class="kw">if</span> (obstacle) dp[x] = <span class="num">0</span>;<br>
+      <span class="kw">else</span> dp[x] = <span class="fn">min3</span>(top, dp[x-<span class="num">1</span>], diag) + <span class="num">1</span>;<br>
+      <span class="fn">keep_best</span>(m, y, x, dp[x]);<br>
+      diag = top;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#334155">// diag = old dp[y-1][x]</span>
+    </div>
+
+    <div class="controls">
+      <button id="btn-prev" disabled onclick="go(-1)">← Prev</button>
+      <button class="primary" id="btn-next" onclick="go(1)">Next →</button>
+      <button onclick="reset()">Reset</button>
+      <span class="step-counter" id="counter">Step 0 / 0</span>
+    </div>
+  </div>
+</div>
+
+<script>
+const H = 4, W = 4;
+const GRID = [
+  ['.','.','.','.',],
+  ['.','.','o','.',],
+  ['.','.','.','.',],
+  ['.','.','.','.',],
+];
+const OB = 'o';
+
+// Precompute all steps
+function computeSteps() {
+  const steps = [];
+  const dp = Array(W).fill(0);
+  let best = 0, br = 0, bc = 0;
+
+  for (let y = 0; y < H; y++) {
+    let diag = 0;
+    for (let x = 0; x < W; x++) {
+      const top = dp[x];
+      const left = x > 0 ? dp[x-1] : 0;
+      let result;
+      const isOb = GRID[y][x] === OB;
+
+      if (isOb) {
+        result = 0;
+      } else {
+        result = Math.min(top, left, diag) + 1;
+      }
+
+      const prevDp = [...dp];
+      dp[x] = result;
+
+      if (result > best) { best = result; br = y - result + 1; bc = x - result + 1; }
+
+      steps.push({
+        y, x, top, left, diag, result, isOb,
+        dpBefore: prevDp,
+        dpAfter: [...dp],
+        best, br, bc
+      });
+
+      diag = top;
+    }
+  }
+  return steps;
+}
+
+const steps = computeSteps();
+let cur = -1;
+
+function buildGrid() {
+  const g = document.getElementById('grid');
+  g.style.gridTemplateColumns = `repeat(${W}, 52px)`;
+  g.innerHTML = '';
+  for (let y = 0; y < H; y++)
+    for (let x = 0; x < W; x++) {
+      const d = document.createElement('div');
+      d.className = 'cell cell-empty';
+      d.id = `cell-${y}-${x}`;
+      d.textContent = GRID[y][x] === OB ? '✕' : '·';
+      g.appendChild(d);
+    }
+}
+
+function buildDpRow() {
+  const r = document.getElementById('dp-row');
+  const idx = document.getElementById('dp-idx');
+  r.innerHTML = ''; idx.innerHTML = '';
+  for (let x = 0; x < W; x++) {
+    const d = document.createElement('div');
+    d.className = 'dp-cell';
+    d.id = `dp-${x}`;
+    d.textContent = '0';
+    r.appendChild(d);
+    const i = document.createElement('div');
+    i.style.cssText = 'width:52px;text-align:center;color:#334155;font-size:11px';
+    i.textContent = `[${x}]`;
+    idx.appendChild(i);
+  }
+}
+
+function render(stepIdx) {
+  // reset all cells
+  for (let y = 0; y < H; y++)
+    for (let x = 0; x < W; x++) {
+      const c = document.getElementById(`cell-${y}-${x}`);
+      c.className = GRID[y][x] === OB ? 'cell cell-ob' : 'cell cell-empty';
+      c.textContent = GRID[y][x] === OB ? '✕' : '·';
+    }
+  for (let x = 0; x < W; x++) {
+    const d = document.getElementById(`dp-${x}`);
+    d.className = 'dp-cell';
+    d.textContent = '0';
+  }
+
+  if (stepIdx < 0) {
+    document.getElementById('v-top').textContent = '—';
+    document.getElementById('v-left').textContent = '—';
+    document.getElementById('v-diag').textContent = '—';
+    document.getElementById('v-cur').textContent = '—';
+    document.getElementById('v-best').textContent = '0';
+    document.getElementById('v-rc').textContent = '—';
+    document.getElementById('formula').innerHTML = 'Waiting for first step...';
+    document.getElementById('explain').innerHTML = 'Press <b>Next</b> to start.';
+    document.getElementById('counter').textContent = `Step 0 / ${steps.length}`;
+    return;
+  }
+
+  const s = steps[stepIdx];
+
+  // color past cells
+  for (let i = 0; i <= stepIdx; i++) {
+    const ps = steps[i];
+    if (i < stepIdx) {
+      const c = document.getElementById(`cell-${ps.y}-${ps.x}`);
+      c.className = GRID[ps.y][ps.x] === OB ? 'cell cell-ob' : 'cell cell-done';
+      c.textContent = ps.result;
+    }
+  }
+
+  // dp row = after state
+  for (let x = 0; x < W; x++) {
+    const d = document.getElementById(`dp-${x}`);
+    d.textContent = s.dpAfter[x];
+    if (x === s.x) d.className = 'dp-cell active';
+    else if (s.dpAfter[x] > 0) d.className = 'dp-cell filled';
+  }
+
+  // current cell
+  const cur_c = document.getElementById(`cell-${s.y}-${s.x}`);
+  cur_c.className = s.isOb ? 'cell cell-ob' : 'cell cell-current';
+  cur_c.textContent = s.result;
+
+  // highlight neighbors
+  if (!s.isOb) {
+    if (s.y > 0) {
+      const tc = document.getElementById(`cell-${s.y-1}-${s.x}`);
+      tc.className = 'cell cell-top';
+    }
+    if (s.x > 0) {
+      const lc = document.getElementById(`cell-${s.y}-${s.x-1}`);
+      lc.className = 'cell cell-left';
+    }
+    if (s.y > 0 && s.x > 0) {
+      const dc = document.getElementById(`cell-${s.y-1}-${s.x-1}`);
+      dc.className = 'cell cell-diag';
+    }
+  }
+
+  // vars
+  document.getElementById('v-top').textContent = s.top;
+  document.getElementById('v-left').textContent = s.x > 0 ? s.left : '0 (edge)';
+  document.getElementById('v-diag').textContent = (s.y > 0 && s.x > 0) ? s.diag : '0 (edge)';
+  document.getElementById('v-cur').textContent = s.result;
+  document.getElementById('v-best').textContent = s.best;
+  document.getElementById('v-rc').textContent = s.best > 0 ? `(${s.br}, ${s.bc})` : '—';
+
+  // formula
+  if (s.isOb) {
+    document.getElementById('formula').innerHTML =
+      `Cell (${s.y},${s.x}) is an <b style="color:#f87171">obstacle</b> → dp[${s.x}] = <b style="color:#f87171">0</b>`;
+  } else {
+    document.getElementById('formula').innerHTML =
+      `dp[${s.x}] = min(<span class="hi-top">top=${s.top}</span>, ` +
+      `<span class="hi-left">left=${s.x>0?s.left:0}</span>, ` +
+      `<span class="hi-diag">diag=${(s.y>0&&s.x>0)?s.diag:0}</span>) + 1 = ` +
+      `<span class="hi-res">${s.result}</span>`;
+  }
+
+  // explanation
+  let exp = '';
+  if (s.isOb) {
+    exp = `<b>Obstacle.</b> dp[${s.x}] = 0. No square can end here.`;
+  } else if (s.y === 0 && s.x === 0) {
+    exp = `<b>First cell.</b> No neighbors above or to the left. dp[0] = 0+1 = <b>${s.result}</b>. A 1×1 square starts here.`;
+  } else if (s.y === 0) {
+    exp = `<b>First row.</b> No row above, so top=0 and diag=0. dp[${s.x}] = min(0, left=${s.left}, 0)+1 = <b>${s.result}</b>. First row is always all 1s (no obstacle).`;
+  } else if (s.x === 0) {
+    exp = `<b>First column.</b> No cell to the left. dp[${s.x}] = min(top=${s.top}, 0, 0)+1 = <b>${s.result}</b>.`;
+  } else {
+    exp = `The weakest neighbor limits the square size. min(<span style="color:#a5b4fc">top=${s.top}</span>, <span style="color:#fb923c">left=${s.left}</span>, <span style="color:#d8b4fe">diag=${s.diag}</span>) = ${Math.min(s.top,s.left,s.diag)}. Add 1 → <b style="color:#4ade80">${s.result}</b>.`;
+    if (s.result > 1) exp += ` This means a <b>${s.result}×${s.result}</b> square fits with bottom-right corner here.`;
+  }
+  if (s.result === s.best && s.best > 0) {
+    exp += ` <b style="color:#fbbf24">New best: ${s.best}×${s.best} at (${s.br},${s.bc}).</b>`;
+  }
+  document.getElementById('explain').innerHTML = exp;
+  document.getElementById('counter').textContent = `Step ${stepIdx+1} / ${steps.length}`;
+}
+
+function go(dir) {
+  cur = Math.max(-1, Math.min(steps.length - 1, cur + dir));
+  render(cur);
+  document.getElementById('btn-prev').disabled = cur <= -1;
+  document.getElementById('btn-next').disabled = cur >= steps.length - 1;
+}
+
+function reset() {
+  cur = -1;
+  render(-1);
+  document.getElementById('btn-prev').disabled = true;
+  document.getElementById('btn-next').disabled = false;
+}
+
+buildGrid();
+buildDpRow();
+render(-1);
+document.getElementById('btn-prev').disabled = true;
+document.getElementById('counter').textContent = `Step 0 / ${steps.length}`;
+</script>
+</body>
+</html>
